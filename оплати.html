@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Оплати — Каразінський університет</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<style>
+  :root{
+    --bg-page:#F4F4F2;--bg-sidebar:#FFFFFF;--bg-card:#FFFFFF;--border:#E7E7E4;
+    --text-primary:#1C1C1A;--text-secondary:#6B6B67;--text-muted:#9C9C97;
+    --accent:#2F6FED;--accent-bg:#EAF1FE;--danger:#D6493B;--danger-bg:#FBEAE7;
+    --success:#2F9E62;--success-bg:#E8F5EC;--gold:#D9A441;--gold-bg:#FBF2E0;
+    --teal:#1E9E8C;--teal-bg:#E4F5F2;--violet:#7C5CE0;--violet-bg:#F0EBFC;
+    --radius-lg:16px;--radius-md:10px;--radius-pill:999px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--bg-page);color:var(--text-primary);-webkit-font-smoothing:antialiased;}
+  .app{display:flex;min-height:100vh;}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{width:280px;flex-shrink:0;background:var(--bg-sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 20px;}
+  .logo{display:flex;align-items:center;gap:10px;padding:0 4px 20px;}
+  .nav-group-label{font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;padding:6px 12px 6px;}
+  .nav{display:flex;flex-direction:column;gap:2px;margin-bottom:18px;}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:var(--radius-md);font-size:14.5px;font-weight:500;color:var(--text-secondary);text-decoration:none;cursor:pointer;transition:background .12s ease,color .12s ease;}
+  .nav-item:hover{background:#F5F5F3;}
+  .nav-item i{font-size:19px;flex-shrink:0;}
+  .nav-item.active{color:var(--accent);background:var(--accent-bg);font-weight:600;}
+  .nav-item .spacer{flex:1;}
+  .nav-badge{font-size:11px;font-weight:700;color:#fff;background:var(--danger);border-radius:var(--radius-pill);padding:1px 7px;line-height:1.5;}
+  .sidebar-bottom{margin-top:auto;padding-top:16px;}
+  .nav-item.exit{color:var(--text-secondary);}
+
+  /* ---------- Main ---------- */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{display:flex;align-items:center;justify-content:flex-end;padding:22px 40px;border-bottom:1px solid var(--border);background:var(--bg-sidebar);}
+  .user-chip{display:flex;align-items:center;gap:10px;}
+  .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#B7A6F2,#8B6FE8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+  .user-email{font-size:13.5px;color:var(--text-primary);font-weight:500;}
+  .user-role{font-size:11.5px;color:var(--text-muted);margin-top:1px;}
+
+  .content{padding:36px 40px 48px;max-width:1180px;}
+  .content-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;}
+  .page-title{font-size:26px;font-weight:700;letter-spacing:-0.3px;}
+  .page-sub{font-size:13.5px;color:var(--text-muted);margin-top:4px;margin-bottom:20px;}
+
+  .btn-add{display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:14px;font-weight:600;padding:11px 20px;border-radius:var(--radius-pill);cursor:pointer;}
+  .btn-add:hover{background:#255bc7;}
+
+  /* ---------- Summary cards ---------- */
+  .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+  .summary-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;}
+  .summary-label{font-size:12px;color:var(--text-secondary);margin-bottom:6px;}
+  .summary-value{font-size:20px;font-weight:700;color:var(--text-primary);}
+  .summary-value.danger{color:var(--danger);}
+  .summary-value.success{color:var(--success);}
+
+  .search-row{display:flex;gap:10px;margin-bottom:18px;}
+  .search-bar{flex:1;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-pill);padding:11px 18px;}
+  .search-bar i{color:var(--text-muted);font-size:16px;}
+  .search-bar input{border:none;outline:none;flex:1;font-family:inherit;font-size:13.5px;color:var(--text-primary);background:transparent;}
+  .search-bar input::placeholder{color:var(--text-muted);}
+  .filter-pill{padding:11px 18px;border-radius:var(--radius-pill);border:1px solid var(--border);background:#fff;font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+
+  /* ---------- Payments list ---------- */
+  .list{display:flex;flex-direction:column;gap:10px;}
+  .pay-row{
+    background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);
+    padding:16px 22px;cursor:pointer;transition:border-color .12s ease;
+    display:grid;grid-template-columns:1.5fr 1.2fr 0.9fr 0.9fr 1fr;align-items:center;gap:16px;
+  }
+  .pay-row:hover{border-color:var(--accent);}
+  .pay-name{font-size:14px;font-weight:600;color:var(--text-primary);}
+  .pay-sub{font-size:12px;color:var(--text-muted);margin-top:2px;}
+  .pay-col .label{font-size:11.5px;color:var(--text-muted);margin-bottom:3px;}
+  .pay-col .value{font-size:13px;color:var(--text-primary);font-weight:500;}
+  .pay-sum{font-size:14px;font-weight:700;color:var(--success);}
+  .pay-sum.penalty{color:var(--danger);}
+  .status-pill{font-size:12px;font-weight:600;padding:5px 12px;border-radius:var(--radius-pill);white-space:nowrap;justify-self:start;}
+  .status-pill.done{color:var(--success);background:var(--success-bg);}
+  .status-pill.pending{color:#8A6410;background:var(--gold-bg);}
+
+  [data-view]{display:none;}
+  [data-view].active{display:block;}
+
+  /* ---------- Detail (ledger) ---------- */
+  .back-link{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;margin-bottom:18px;}
+  .back-link i{font-size:16px;}
+
+  .detail-head{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;margin-bottom:16px;}
+  .detail-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .detail-name{font-size:19px;font-weight:700;}
+  .detail-sub{font-size:12.5px;color:var(--text-muted);margin-top:2px;}
+  .detail-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .detail-stat{border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;}
+  .detail-stat .label{font-size:11.5px;color:var(--text-muted);margin-bottom:5px;}
+  .detail-stat .value{font-size:16px;font-weight:700;color:var(--text-primary);}
+  .detail-stat .value.danger{color:var(--danger);}
+  .detail-stat .value.success{color:var(--success);}
+
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .section-title{font-size:15px;font-weight:600;}
+
+  .ledger{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+  .ledger-row{display:grid;grid-template-columns:1fr 1fr 1fr 0.8fr 0.8fr;padding:12px 20px;font-size:13px;border-bottom:1px solid var(--border);}
+  .ledger-row:last-child{border-bottom:none;}
+  .ledger-row.head{background:#FAFAF8;font-size:11.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px;}
+  .ledger-row.total{background:#FAFAF8;font-weight:700;}
+  .ledger-row .paid{color:var(--success);font-weight:500;}
+  .ledger-row .penalty{color:var(--danger);}
+  .ledger-row .empty{color:var(--text-muted);}
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{position:fixed;inset:0;background:rgba(28,28,26,0.45);display:none;align-items:center;justify-content:center;z-index:50;padding:24px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:#fff;border-radius:var(--radius-lg);width:600px;max-width:100%;max-height:88vh;overflow-y:auto;padding:26px 28px 24px;}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .modal-title{font-size:18px;font-weight:700;}
+  .modal-close{color:var(--text-muted);font-size:20px;cursor:pointer;display:flex;}
+  .modal-sub{font-size:13px;color:var(--text-muted);margin-bottom:20px;}
+  .step-label{font-size:11.5px;font-weight:700;color:var(--accent);letter-spacing:0.4px;text-transform:uppercase;margin-bottom:10px;}
+
+  .field{margin-bottom:16px;}
+  .field-label{font-size:12.5px;font-weight:600;color:var(--text-primary);margin-bottom:7px;display:block;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  select,.input{width:100%;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;font-family:inherit;font-size:13px;color:var(--text-primary);background:#fff;}
+
+  .student-search{display:flex;align-items:center;gap:9px;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;margin-bottom:8px;}
+  .student-search i{color:var(--text-muted);font-size:15px;}
+  .student-search input{border:none;outline:none;flex:1;font-family:inherit;font-size:13px;color:var(--text-primary);background:transparent;}
+  .search-results{display:flex;flex-direction:column;gap:4px;margin-bottom:8px;}
+  .search-result-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:var(--radius-md);cursor:pointer;font-size:13px;}
+  .search-result-item:hover{background:var(--accent-bg);}
+  .search-result-name{font-weight:600;color:var(--text-primary);}
+  .search-result-meta{color:var(--text-muted);font-size:11.5px;margin-left:auto;}
+
+  .picked-student-card{display:flex;align-items:center;gap:12px;border:1px solid var(--border);background:#FAFAF8;border-radius:var(--radius-md);padding:12px 14px;margin-bottom:16px;}
+  .picked-student-info{flex:1;min-width:0;}
+  .picked-student-name{font-size:13.5px;font-weight:600;color:var(--text-primary);}
+  .picked-student-meta{font-size:12px;color:var(--text-muted);margin-top:2px;}
+  .picked-clear{color:var(--text-muted);cursor:pointer;flex-shrink:0;}
+  .picked-clear:hover{color:var(--danger);}
+
+  .doc-upload-row{display:flex;align-items:center;gap:12px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:16px;}
+  .doc-upload-row.attached{border-style:solid;border-color:var(--success);background:var(--success-bg);}
+  .doc-upload-icon{color:var(--text-muted);flex-shrink:0;}
+  .doc-upload-text{flex:1;font-size:12.5px;color:var(--text-secondary);}
+  .doc-upload-row.attached .doc-upload-text{color:#1E7A44;font-weight:500;}
+  .doc-upload-btn{background:var(--accent-bg);color:var(--accent);border:none;font-family:inherit;font-size:12px;font-weight:600;padding:7px 13px;border-radius:var(--radius-pill);cursor:pointer;}
+
+  .modal-actions{display:flex;gap:10px;margin-top:22px;}
+  .btn-modal-primary{flex:1;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:14px;font-weight:600;padding:12px 0;border-radius:var(--radius-pill);cursor:pointer;}
+  .btn-modal-primary:disabled{opacity:.4;cursor:not-allowed;background:#9C9C97;}
+  .btn-modal-secondary{background:#fff;color:var(--text-secondary);border:1px solid var(--border);font-family:inherit;font-size:13.5px;font-weight:600;padding:12px 18px;border-radius:var(--radius-pill);cursor:pointer;}
+
+  /* ---------- Role switch ---------- */
+  .role-switch-option{display:flex;align-items:center;gap:13px;border:1.5px solid var(--border);border-radius:var(--radius-md);padding:13px 15px;cursor:pointer;margin-bottom:10px;}
+  .role-switch-option:hover{border-color:var(--accent);}
+  .role-switch-option.current{border-color:var(--accent);background:var(--accent-bg);cursor:default;}
+  .role-switch-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .role-switch-name{font-size:13.5px;font-weight:600;color:var(--text-primary);}
+  .role-switch-desc{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="data:image/png;base64,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" alt="Каразінський університет" style="height:34px;width:auto;">
+    </div>
+
+    <div class="nav-group-label">Головне</div>
+    <nav class="nav">
+      <a class="nav-item"><i class="ti ti-layout-dashboard"></i>Дашборд</a>
+      <a class="nav-item"><i class="ti ti-alert-triangle"></i>Боржники<span class="spacer"></span><span class="nav-badge">18</span></a>
+    </nav>
+
+    <div class="nav-group-label">Фінанси та документи</div>
+    <nav class="nav">
+      <a class="nav-item" onclick="window.location.href='контракти-v2.html'"><i class="ti ti-file-text"></i>Контракти</a>
+      <a class="nav-item active"><i class="ti ti-credit-card"></i>Оплати</a>
+      <a class="nav-item"><i class="ti ti-chart-bar"></i>Звіти</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <a class="nav-item"><i class="ti ti-settings"></i>Налаштування</a>
+      <a class="nav-item exit" id="roleSwitchBtn"><i class="ti ti-logout"></i>Вийти</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="user-chip">
+        <div class="user-avatar">ІЛ</div>
+        <div>
+          <div class="user-email">ivanenko.l@karazin.ua</div>
+          <div class="user-role">Контрактний відділ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ===================== СПИСОК ОПЛАТ ===================== -->
+      <div data-view="list" class="active">
+        <div class="content-header">
+          <div><h1 class="page-title">Оплати</h1></div>
+          <button class="btn-add" id="openPaymentModal"><i class="ti ti-plus"></i>Зареєструвати оплату</button>
+        </div>
+        <p class="page-sub">Історія платежів по всіх контрактах</p>
+
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-label">Оплачено цей місяць</div>
+            <div class="summary-value success">318 900 грн</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Платежів сьогодні</div>
+            <div class="summary-value">7</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Загальний борг</div>
+            <div class="summary-value danger">42 300 грн</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Нарахована пеня</div>
+            <div class="summary-value danger">1 140 грн</div>
+          </div>
+        </div>
+
+        <div class="search-row">
+          <div class="search-bar">
+            <i class="ti ti-search"></i>
+            <input type="text" placeholder="Пошук за ПІБ або номером контракту">
+          </div>
+          <div class="filter-pill"><i class="ti ti-filter"></i>Період: цей місяць</div>
+          <div class="filter-pill"><i class="ti ti-filter"></i>Спосіб: усі</div>
+        </div>
+
+        <div class="list">
+
+          <div class="pay-row" data-name="Ковальчук Марія Олегівна" onclick="openLedger(this)">
+            <div>
+              <div class="pay-name">Ковальчук Марія Олегівна</div>
+              <div class="pay-sub">Бакалаврат для іноземців · № 24-35</div>
+            </div>
+            <div class="pay-col"><div class="label">Спосіб</div><div class="value">Приватбанк</div></div>
+            <div class="pay-col"><div class="label">Дата</div><div class="value">05.07.2026</div></div>
+            <div class="pay-sum">+15 000 грн</div>
+            <span class="status-pill done">Проведено</span>
+          </div>
+
+          <div class="pay-row" data-name="Демченко Павло Ігорович" onclick="openLedger(this)">
+            <div>
+              <div class="pay-name">Демченко Павло Ігорович</div>
+              <div class="pay-sub">Бакалаврат для іноземців · № 23-19</div>
+            </div>
+            <div class="pay-col"><div class="label">Спосіб</div><div class="value">Монобанк</div></div>
+            <div class="pay-col"><div class="label">Дата</div><div class="value">03.07.2026</div></div>
+            <div class="pay-sum">+12 500 грн</div>
+            <span class="status-pill done">Проведено</span>
+          </div>
+
+          <div class="pay-row" data-name="Аббазаде Фахраддін" onclick="openLedger(this)">
+            <div>
+              <div class="pay-name">Аббазаде Фахраддін</div>
+              <div class="pay-sub">Магістратура для іноземців · № 24-21</div>
+            </div>
+            <div class="pay-col"><div class="label">Спосіб</div><div class="value">Приватбанк</div></div>
+            <div class="pay-col"><div class="label">Дата</div><div class="value">30.06.2026</div></div>
+            <div class="pay-sum">+150 $</div>
+            <span class="status-pill done">Проведено</span>
+          </div>
+
+          <div class="pay-row" data-name="Соколова Ольга Андріївна" onclick="openLedger(this)">
+            <div>
+              <div class="pay-name">Соколова Ольга Андріївна</div>
+              <div class="pay-sub">Бакалаврат для іноземців · № 24-52</div>
+            </div>
+            <div class="pay-col"><div class="label">Спосіб</div><div class="value">LiqPay</div></div>
+            <div class="pay-col"><div class="label">Дата</div><div class="value">28.06.2026</div></div>
+            <div class="pay-sum penalty">+744 грн</div>
+            <span class="status-pill pending">Очікує підтвердження</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===================== ІСТОРІЯ НАРАХУВАНЬ (ledger) ===================== -->
+      <div data-view="detail">
+        <div class="back-link" id="backToList"><i class="ti ti-chevron-left"></i>Назад до оплат</div>
+
+        <div class="detail-head">
+          <div class="detail-top">
+            <div>
+              <div class="detail-name" id="ledgerName">Ковальчук Марія Олегівна</div>
+              <div class="detail-sub" id="ledgerSub">Бакалаврат для іноземців · № 24-35</div>
+            </div>
+            <button class="btn-add" id="openPaymentModalFromLedger"><i class="ti ti-plus"></i>Зареєструвати оплату</button>
+          </div>
+          <div class="detail-stats">
+            <div class="detail-stat"><div class="label">Борг на сьогодні</div><div class="value success">0,00 у.о.</div></div>
+            <div class="detail-stat"><div class="label">Передоплата</div><div class="value">0,00 у.о.</div></div>
+            <div class="detail-stat"><div class="label">Пеня</div><div class="value">0,00</div></div>
+            <div class="detail-stat"><div class="label">Річна сума</div><div class="value">1 800 $</div></div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <span class="section-title">Історія нарахувань</span>
+        </div>
+
+        <div class="ledger">
+          <div class="ledger-row head">
+            <span>Місяць</span><span>Нараховано</span><span>Оплачено</span><span>Пеня нарах.</span><span>Пеня опл.</span>
+          </div>
+          <div class="ledger-row"><span>Лютий 2026</span><span>150,00</span><span class="paid">150,00</span><span class="empty">—</span><span class="empty">—</span></div>
+          <div class="ledger-row"><span>Березень 2026</span><span>150,00</span><span class="paid">150,00</span><span class="empty">—</span><span class="empty">—</span></div>
+          <div class="ledger-row"><span>Квітень 2026</span><span>150,00</span><span class="paid">150,00</span><span class="empty">—</span><span class="empty">—</span></div>
+          <div class="ledger-row"><span>Травень 2026</span><span>150,00</span><span class="paid">150,00</span><span class="empty">—</span><span class="empty">—</span></div>
+          <div class="ledger-row"><span>Червень 2026</span><span>150,00</span><span class="paid">150,00</span><span class="empty">—</span><span class="empty">—</span></div>
+          <div class="ledger-row"><span>Липень 2026</span><span>150,00</span><span class="paid">150,00</span><span class="empty">—</span><span class="empty">—</span></div>
+          <div class="ledger-row total"><span>Разом за період</span><span>900,00</span><span class="paid">900,00</span><span>0,00</span><span>0,00</span></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ===================== МОДАЛЬНЕ ВІКНО РЕЄСТРАЦІЇ ОПЛАТИ ===================== -->
+<div class="modal-overlay" id="paymentModalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Реєстрація оплати</span>
+      <span class="modal-close" id="closePaymentModalBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></span>
+    </div>
+    <p class="modal-sub">Знайдіть студента та внесіть деталі платежу</p>
+
+    <div class="step-label">Студент</div>
+    <div class="student-search">
+      <i class="ti ti-search"></i>
+      <input type="text" id="paymentStudentSearch" placeholder="Пошук за ПІБ" autocomplete="off">
+    </div>
+    <div class="search-results" id="paymentSearchResults"></div>
+    <div class="picked-student-card" id="paymentPickedCard" style="display:none;">
+      <div class="picked-student-info">
+        <div class="picked-student-name" id="paymentPickedName">—</div>
+        <div class="picked-student-meta" id="paymentPickedMeta">—</div>
+      </div>
+      <svg class="picked-clear" id="paymentPickedClear" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+    </div>
+
+    <div class="step-label">Деталі оплати</div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Сума</label>
+        <input class="input" type="text" id="paymentSum" placeholder="0">
+      </div>
+      <div>
+        <label class="field-label">Валюта</label>
+        <select id="paymentCurrency">
+          <option value="UAH">грн</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Форма оплати</label>
+        <select id="paymentMethod">
+          <option>Приватбанк</option>
+          <option>Монобанк</option>
+          <option>LiqPay</option>
+          <option>Готівка</option>
+          <option>Безготівковий переказ</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Вид оплати</label>
+        <select id="paymentType">
+          <option>Основна</option>
+          <option>Пеня</option>
+          <option>Передоплата</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Підстава</label>
+        <select id="paymentReason">
+          <option>Оплата за навчання</option>
+          <option>Оплата за гуртожиток</option>
+          <option>Оплата за курси</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Дата оплати</label>
+        <input class="input" type="text" id="paymentDate" placeholder="Обрати значення">
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Платник</label>
+      <input class="input" type="text" id="paymentPayer" placeholder="ПІБ, якщо не сам студент">
+    </div>
+
+    <div class="step-label">Підтверджуючий документ</div>
+    <div class="doc-upload-row" id="paymentDocRow">
+      <div class="doc-upload-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></div>
+      <div class="doc-upload-text" id="paymentDocText">Квитанція або платіжне доручення. PDF, JPG, PNG — до 10 MB.</div>
+      <button class="doc-upload-btn" id="paymentDocBtn">Завантажити</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-secondary" id="cancelPaymentModalBtn">Скасувати</button>
+      <button class="btn-modal-primary" id="savePaymentBtn" disabled>Зареєструвати оплату</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== МОДАЛЬНЕ ВІКНО ПЕРЕМИКАННЯ РОЛІ ===================== -->
+<div class="modal-overlay" id="roleSwitchOverlay">
+  <div class="modal" style="width:380px;">
+    <div class="modal-header">
+      <span class="modal-title">Перемкнути роль</span>
+      <span class="modal-close" id="closeRoleSwitchBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></span>
+    </div>
+    <p class="modal-sub">Для демонстрації прототипу — обери, чий інтерфейс показати</p>
+
+    <div class="role-switch-option current">
+      <div class="role-switch-icon" style="background:var(--violet-bg);color:var(--violet);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6"/><path d="M9 16h6"/><path d="M4 4h16v16H4z"/></svg></div>
+      <div>
+        <div class="role-switch-name">Оплати (контрактний)</div>
+        <div class="role-switch-desc">Ви тут зараз</div>
+      </div>
+    </div>
+    <div class="role-switch-option" data-href="клієнти.html">
+      <div class="role-switch-icon" style="background:var(--teal-bg);color:var(--teal);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div>
+        <div class="role-switch-name">Кадровий відділ</div>
+        <div class="role-switch-desc">Користувачі, довідки, заявки</div>
+      </div>
+    </div>
+    <div class="role-switch-option" data-href="контракти-v2.html">
+      <div class="role-switch-icon" style="background:var(--gold-bg);color:#8A6410;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+      <div>
+        <div class="role-switch-name">Контракти</div>
+        <div class="role-switch-desc">Перейти до списку контрактів</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const usersDB = [
+    { name: 'Ковальчук Марія Олегівна', country: 'Україна', contract: 'Бакалаврат для іноземців · № 24-35' },
+    { name: 'Аббазаде Фахраддін', country: 'Азербайджан', contract: 'Магістратура для іноземців · № 24-21' },
+    { name: 'Демченко Павло Ігорович', country: 'Україна', contract: 'Бакалаврат для іноземців · № 23-19' },
+    { name: 'Соколова Ольга Андріївна', country: 'Україна', contract: 'Бакалаврат для іноземців · № 24-52' }
+  ];
+
+  // ---------- Пошук студента в модалці оплати ----------
+  const paymentSearchInput = document.getElementById('paymentStudentSearch');
+  const paymentResults = document.getElementById('paymentSearchResults');
+  const paymentPickedCard = document.getElementById('paymentPickedCard');
+
+  paymentSearchInput.addEventListener('input', () => {
+    const q = paymentSearchInput.value.trim().toLowerCase();
+    paymentResults.innerHTML = '';
+    if (q.length === 0) return;
+    usersDB.filter(u => u.name.toLowerCase().includes(q)).slice(0, 5).forEach(u => {
+      const item = document.createElement('div');
+      item.className = 'search-result-item';
+      item.innerHTML = '<span class="search-result-name">' + u.name + '</span><span class="search-result-meta">' + u.country + '</span>';
+      item.addEventListener('click', () => {
+        paymentSearchInput.value = '';
+        paymentResults.innerHTML = '';
+        paymentPickedCard.style.display = 'flex';
+        document.getElementById('paymentPickedName').textContent = u.name;
+        document.getElementById('paymentPickedMeta').textContent = u.contract;
+        checkPaymentFormValid();
+      });
+      paymentResults.appendChild(item);
+    });
+  });
+  document.getElementById('paymentPickedClear').addEventListener('click', () => {
+    paymentPickedCard.style.display = 'none';
+    checkPaymentFormValid();
+  });
+
+  // ---------- Симуляція завантаження документа ----------
+  const paymentDocRow = document.getElementById('paymentDocRow');
+  const paymentDocBtn = document.getElementById('paymentDocBtn');
+  let docAttached = false;
+  paymentDocBtn.addEventListener('click', () => {
+    docAttached = !docAttached;
+    paymentDocRow.classList.toggle('attached', docAttached);
+    document.getElementById('paymentDocText').textContent = docAttached
+      ? 'receipt_07072026.pdf · 0.6 MB'
+      : 'Квитанція або платіжне доручення. PDF, JPG, PNG — до 10 MB.';
+    paymentDocBtn.textContent = docAttached ? 'Видалити' : 'Завантажити';
+    checkPaymentFormValid();
+  });
+
+  // ---------- Валідація форми оплати ----------
+  function checkPaymentFormValid(){
+    const hasStudent = paymentPickedCard.style.display === 'flex';
+    const hasSum = document.getElementById('paymentSum').value.trim().length > 0;
+    const hasDate = document.getElementById('paymentDate').value.trim().length > 0;
+    document.getElementById('savePaymentBtn').disabled = !(hasStudent && hasSum && hasDate && docAttached);
+  }
+  document.getElementById('paymentSum').addEventListener('input', checkPaymentFormValid);
+  document.getElementById('paymentDate').addEventListener('input', checkPaymentFormValid);
+
+  // ---------- Модальне вікно реєстрації оплати ----------
+  const paymentOverlay = document.getElementById('paymentModalOverlay');
+  function openPaymentModal(){
+    paymentOverlay.classList.add('open');
+    paymentPickedCard.style.display = 'none';
+    paymentSearchInput.value = '';
+    paymentResults.innerHTML = '';
+    document.getElementById('paymentSum').value = '';
+    document.getElementById('paymentDate').value = '';
+    docAttached = false;
+    paymentDocRow.classList.remove('attached');
+    document.getElementById('paymentDocText').textContent = 'Квитанція або платіжне доручення. PDF, JPG, PNG — до 10 MB.';
+    paymentDocBtn.textContent = 'Завантажити';
+    document.getElementById('savePaymentBtn').disabled = true;
+  }
+  document.getElementById('openPaymentModal').addEventListener('click', openPaymentModal);
+  document.getElementById('openPaymentModalFromLedger').addEventListener('click', openPaymentModal);
+  document.getElementById('closePaymentModalBtn').addEventListener('click', () => paymentOverlay.classList.remove('open'));
+  document.getElementById('cancelPaymentModalBtn').addEventListener('click', () => paymentOverlay.classList.remove('open'));
+  paymentOverlay.addEventListener('click', (e) => { if (e.target === paymentOverlay) paymentOverlay.classList.remove('open'); });
+  document.getElementById('savePaymentBtn').addEventListener('click', () => paymentOverlay.classList.remove('open'));
+
+  // ---------- Перехід зі списку в історію нарахувань ----------
+  function openLedger(row){
+    document.querySelector('[data-view="list"]').classList.remove('active');
+    document.querySelector('[data-view="detail"]').classList.add('active');
+    document.getElementById('ledgerName').textContent = row.dataset.name;
+    document.getElementById('ledgerSub').textContent = row.querySelector('.pay-sub').textContent;
+  }
+  document.getElementById('backToList').addEventListener('click', () => {
+    document.querySelector('[data-view="detail"]').classList.remove('active');
+    document.querySelector('[data-view="list"]').classList.add('active');
+  });
+
+  // ---------- Перемикач ролей ----------
+  const roleSwitchOverlay = document.getElementById('roleSwitchOverlay');
+  document.getElementById('roleSwitchBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    roleSwitchOverlay.classList.add('open');
+  });
+  document.getElementById('closeRoleSwitchBtn').addEventListener('click', () => roleSwitchOverlay.classList.remove('open'));
+  roleSwitchOverlay.addEventListener('click', (e) => { if (e.target === roleSwitchOverlay) roleSwitchOverlay.classList.remove('open'); });
+  document.querySelectorAll('.role-switch-option[data-href]').forEach(opt => {
+    opt.addEventListener('click', () => { window.location.href = opt.dataset.href; });
+  });
+</script>
+</body>
+</html>

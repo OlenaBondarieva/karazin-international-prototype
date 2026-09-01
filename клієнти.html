@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Користувачі — Каразінський університет</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<style>
+  :root{
+    --bg-page:#F4F4F2;--bg-sidebar:#FFFFFF;--bg-card:#FFFFFF;--border:#E7E7E4;
+    --text-primary:#1C1C1A;--text-secondary:#6B6B67;--text-muted:#9C9C97;
+    --accent:#2F6FED;--accent-bg:#EAF1FE;--danger:#D6493B;--danger-bg:#FBEAE7;
+    --success:#2F9E62;--success-bg:#E8F5EC;--gold:#D9A441;--gold-bg:#FBF2E0;
+    --teal:#1E9E8C;--teal-bg:#E4F5F2;--violet:#7C5CE0;--violet-bg:#F0EBFC;
+    --radius-lg:16px;--radius-md:10px;--radius-pill:999px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--bg-page);color:var(--text-primary);-webkit-font-smoothing:antialiased;}
+  .app{display:flex;min-height:100vh;}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{width:280px;flex-shrink:0;background:var(--bg-sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 20px;}
+  .logo{display:flex;align-items:center;gap:10px;padding:0 4px 20px;}
+  .logo-mark{width:34px;height:34px;flex-shrink:0;}
+  .logo-text{font-size:13px;font-weight:700;line-height:1.25;letter-spacing:0.2px;}
+  .logo-text .top{color:var(--text-primary);}
+  .logo-text .bottom{color:var(--gold);}
+  .role-chip{display:flex;align-items:center;gap:8px;background:var(--teal-bg);color:var(--teal);border-radius:var(--radius-md);padding:9px 12px;font-size:12px;font-weight:600;margin-bottom:20px;}
+  .role-chip i{font-size:15px;}
+  .nav-group-label{font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;padding:6px 12px 6px;}
+  .nav{display:flex;flex-direction:column;gap:2px;margin-bottom:18px;}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:var(--radius-md);font-size:14.5px;font-weight:500;color:var(--text-secondary);text-decoration:none;cursor:pointer;transition:background .12s ease,color .12s ease;}
+  .nav-item:hover{background:#F5F5F3;}
+  .nav-item i{font-size:19px;flex-shrink:0;}
+  .nav-item.active{color:var(--accent);background:var(--accent-bg);font-weight:600;}
+  .nav-item .spacer{flex:1;}
+  .nav-badge{font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:var(--radius-pill);padding:1px 7px;line-height:1.5;}
+  .sidebar-bottom{margin-top:auto;padding-top:16px;}
+  .nav-item.exit{color:var(--text-secondary);}
+  .no-access-note{display:flex;align-items:flex-start;gap:8px;background:#FAFAF8;border:1px dashed var(--border);border-radius:var(--radius-md);padding:10px 11px;font-size:11.5px;color:var(--text-muted);line-height:1.5;margin-top:6px;}
+  .no-access-note i{font-size:14px;margin-top:1px;flex-shrink:0;}
+
+  /* ---------- Main ---------- */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{display:flex;align-items:center;justify-content:flex-end;padding:22px 40px;border-bottom:1px solid var(--border);background:var(--bg-sidebar);}
+  .user-chip{display:flex;align-items:center;gap:10px;}
+  .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8FD9CC,#1E9E8C);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+  .user-email{font-size:13.5px;color:var(--text-primary);font-weight:500;}
+  .user-role{font-size:11.5px;color:var(--text-muted);margin-top:1px;}
+
+  .content{padding:36px 40px 48px;max-width:1180px;}
+  .content-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .page-title{font-size:26px;font-weight:700;letter-spacing:-0.3px;}
+  .page-sub{font-size:13.5px;color:var(--text-muted);margin-top:4px;margin-bottom:20px;}
+
+  .btn-add{display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:14px;font-weight:600;padding:11px 20px;border-radius:var(--radius-pill);cursor:pointer;}
+  .btn-add i{font-size:16px;}
+  .btn-add:hover{background:#255bc7;}
+
+  [data-view]{display:none;}
+  [data-view].active{display:block;}
+
+  /* ---------- Status tabs ---------- */
+  .status-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+  .status-tab{padding:9px 16px;border-radius:var(--radius-pill);border:1px solid var(--border);background:#fff;font-size:12.5px;font-weight:600;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;gap:6px;}
+  .status-tab .count{font-size:11px;background:#F2F2F0;border-radius:999px;padding:1px 7px;color:var(--text-muted);}
+  .status-tab.active{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);}
+  .status-tab.active .count{background:#fff;color:var(--accent);}
+
+  .search-row{display:flex;gap:10px;margin-bottom:18px;}
+  .search-bar{flex:1;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-pill);padding:11px 18px;}
+  .search-bar i{color:var(--text-muted);font-size:16px;}
+  .search-bar input{border:none;outline:none;flex:1;font-family:inherit;font-size:13.5px;color:var(--text-primary);background:transparent;}
+  .search-bar input::placeholder{color:var(--text-muted);}
+  .filter-pill{padding:11px 18px;border-radius:var(--radius-pill);border:1px solid var(--border);background:#fff;font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+  .filter-pill i{font-size:15px;}
+
+  /* ---------- List ---------- */
+  .list{display:flex;flex-direction:column;gap:10px;}
+  .client-row{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 22px;display:flex;align-items:center;gap:20px;cursor:pointer;transition:border-color .12s ease;}
+  .client-row:hover{border-color:var(--accent);}
+  .client-main{flex:1.4;min-width:0;}
+  .client-name{font-size:14.5px;font-weight:600;color:var(--text-primary);}
+  .client-sub{font-size:12.5px;color:var(--text-muted);margin-top:3px;}
+  .client-col{min-width:150px;}
+  .client-col .value{font-size:13.5px;color:var(--text-primary);font-weight:600;}
+  .client-col .label{font-size:12px;color:var(--text-muted);margin-top:3px;}
+
+  .status-pill{font-size:12px;font-weight:600;padding:5px 12px;border-radius:var(--radius-pill);white-space:nowrap;}
+  .status-pill.lead{color:var(--text-secondary);background:#F0F0EE;}
+  .status-pill.applicant{color:#8A6410;background:var(--gold-bg);}
+  .status-pill.student{color:var(--success);background:var(--success-bg);}
+  .status-pill.archive{color:var(--text-muted);background:#F2F2F0;}
+
+  .row-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+  .row-icon-btn{width:32px;height:32px;border-radius:8px;background:transparent;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);cursor:pointer;}
+  .row-icon-btn:hover{background:var(--accent-bg);color:var(--accent);}
+  .row-icon-btn.danger:hover{background:var(--danger-bg);color:var(--danger);}
+
+  /* ---------- Detail view ---------- */
+  .back-link{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;margin-bottom:18px;}
+  .back-link i{font-size:16px;}
+
+  .detail-head{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;margin-bottom:16px;}
+  .detail-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;}
+  .detail-title-row{display:flex;align-items:center;gap:14px;}
+  .detail-avatar{width:52px;height:52px;border-radius:50%;background:#5B8DEF;color:#fff;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .detail-name{font-size:19px;font-weight:700;}
+  .detail-badges{display:flex;gap:8px;margin-top:6px;}
+  .type-badge{font-size:11px;font-weight:600;padding:4px 10px;border-radius:var(--radius-pill);white-space:nowrap;}
+  .type-badge.resident{color:var(--accent);background:var(--accent-bg);}
+  .type-badge.foreign{color:var(--violet);background:var(--violet-bg);}
+  .detail-actions{display:flex;gap:8px;}
+  .icon-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;font-size:15px;}
+  .icon-btn:hover{color:var(--accent);border-color:var(--accent);}
+  .icon-btn.danger:hover{color:var(--danger);border-color:var(--danger);}
+
+  .detail-fields{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px;}
+  .detail-field{border:1px solid var(--border);border-radius:var(--radius-md);padding:11px 13px;}
+  .detail-field .label{font-size:11px;color:var(--text-muted);margin-bottom:4px;}
+  .detail-field .value{font-size:13px;font-weight:500;color:var(--text-primary);}
+
+  .status-progress{display:flex;align-items:center;gap:0;margin-top:18px;}
+  .status-step{display:flex;align-items:center;gap:8px;flex:1;}
+  .status-dot{width:26px;height:26px;border-radius:50%;background:#F0F0EE;color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+  .status-step.done .status-dot{background:var(--success);color:#fff;}
+  .status-step.current .status-dot{background:var(--accent);color:#fff;}
+  .status-step-label{font-size:12px;font-weight:600;color:var(--text-muted);}
+  .status-step.done .status-step-label,.status-step.current .status-step-label{color:var(--text-primary);}
+  .status-line{flex:1;height:2px;background:#F0F0EE;margin:0 6px;}
+  .status-line.done{background:var(--success);}
+
+  .status-change-row{display:flex;align-items:center;gap:12px;}
+  .status-change-row label{font-size:12.5px;font-weight:600;color:var(--text-primary);}
+  .status-select{border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 12px;font-family:inherit;font-size:13px;color:var(--text-primary);background:#fff;}
+  .btn-save-status{background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:var(--radius-pill);cursor:pointer;}
+  .btn-save-status:hover{background:#255bc7;}
+
+  .section-title{font-size:15px;font-weight:600;margin-bottom:14px;}
+
+  .doc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+  .doc-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
+  .doc-card.missing{border-style:dashed;background:#FAFAF8;}
+  .doc-top{display:flex;align-items:center;gap:10px;}
+  .doc-icon{width:34px;height:34px;border-radius:8px;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+  .doc-card.missing .doc-icon{background:#F0F0EE;color:var(--text-muted);}
+  .doc-name{font-size:12.5px;font-weight:600;color:var(--text-primary);}
+  .doc-meta{font-size:11px;color:var(--text-muted);margin-top:1px;}
+  .doc-actions{display:flex;gap:6px;margin-top:2px;}
+  .doc-actions .icon-btn{width:28px;height:28px;font-size:13px;}
+  .btn-upload-small{flex:1;background:var(--accent-bg);color:var(--accent);border:none;font-family:inherit;font-size:12px;font-weight:600;padding:8px 0;border-radius:var(--radius-pill);cursor:pointer;}
+
+  .linked-row{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:13px 16px;display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+  .linked-icon{width:32px;height:32px;border-radius:8px;background:var(--gold-bg);color:#8A6410;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+  .linked-main{flex:1;min-width:0;}
+  .linked-name{font-size:13px;font-weight:600;color:var(--text-primary);}
+  .linked-sub{font-size:11.5px;color:var(--text-muted);margin-top:1px;}
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{position:fixed;inset:0;background:rgba(28,28,26,0.45);display:none;align-items:center;justify-content:center;z-index:50;padding:24px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:#fff;border-radius:var(--radius-lg);width:620px;max-width:100%;max-height:88vh;overflow-y:auto;padding:26px 28px 24px;}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .modal-title{font-size:18px;font-weight:700;}
+  .modal-close{color:var(--text-muted);font-size:20px;cursor:pointer;}
+  .modal-sub{font-size:13px;color:var(--text-muted);margin-bottom:20px;}
+  .step-label{font-size:11.5px;font-weight:700;color:var(--accent);letter-spacing:0.4px;text-transform:uppercase;margin-bottom:10px;}
+
+  .toggle-row{display:flex;gap:8px;}
+  .toggle-pill{flex:1;text-align:center;border:1px solid var(--border);border-radius:var(--radius-pill);padding:10px 0;font-size:13px;font-weight:600;color:var(--text-secondary);cursor:pointer;}
+  .toggle-pill.selected{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);}
+
+  .radio-group{display:flex;gap:22px;}
+  .radio-option{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--text-primary);cursor:pointer;}
+  .radio-option input{display:none;}
+  .radio-dot{width:18px;height:18px;border-radius:50%;border:2px solid #C9C9C4;position:relative;flex-shrink:0;}
+  .radio-option input:checked + .radio-dot{border-color:var(--accent);}
+  .radio-option input:checked + .radio-dot::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--accent);}
+
+  .field{margin-bottom:16px;}
+  .field-label{font-size:12.5px;font-weight:600;color:var(--text-primary);margin-bottom:7px;display:block;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  select,.input{width:100%;border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;font-family:inherit;font-size:13px;color:var(--text-primary);background:#fff;}
+
+  .status-select-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .status-option{padding:9px 14px;border-radius:var(--radius-pill);border:1px solid var(--border);font-size:12.5px;font-weight:600;color:var(--text-secondary);cursor:pointer;}
+  .status-option.selected{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);}
+
+  .modal-doc-list{display:flex;flex-direction:column;gap:8px;margin-bottom:6px;}
+  .modal-doc-item{display:flex;align-items:center;gap:13px;border:1px dashed var(--border);border-radius:var(--radius-md);padding:13px 14px;}
+  .modal-doc-item.attached{border-style:solid;border-color:var(--success);background:var(--success-bg);}
+  .modal-doc-item-icon{color:var(--text-muted);flex-shrink:0;}
+  .modal-doc-item-body{flex:1;min-width:0;}
+  .modal-doc-item .doc-item-name{font-size:13.5px;color:var(--text-primary);font-weight:600;}
+  .modal-doc-item .doc-item-req{font-size:11.5px;color:var(--text-muted);margin-top:3px;}
+  .modal-doc-item.attached .doc-item-req{color:var(--success);font-weight:500;}
+  .doc-item-req-remove{color:inherit;text-decoration:underline;cursor:pointer;margin-left:6px;}
+  .doc-upload-circle{
+    width:36px;height:36px;border-radius:50%;flex-shrink:0;
+    background:var(--accent-bg);color:var(--accent);border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .doc-upload-circle:hover{background:#DCE9FD;}
+  .doc-upload-circle.done{background:var(--success);color:#fff;}
+  .field-hint{font-size:11.5px;color:var(--text-muted);margin-top:8px;}
+
+  .modal-actions{display:flex;gap:10px;margin-top:22px;}
+  .btn-modal-primary{flex:1;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:14px;font-weight:600;padding:12px 0;border-radius:var(--radius-pill);cursor:pointer;}
+  .btn-modal-primary:disabled{opacity:.4;cursor:not-allowed;background:#9C9C97;}
+  .btn-modal-secondary{background:#fff;color:var(--text-secondary);border:1px solid var(--border);font-family:inherit;font-size:13.5px;font-weight:600;padding:12px 18px;border-radius:var(--radius-pill);cursor:pointer;}
+
+  /* ---------- Перемикач ролей ---------- */
+  .role-switch-option{display:flex;align-items:center;gap:13px;border:1.5px solid var(--border);border-radius:var(--radius-md);padding:13px 15px;cursor:pointer;margin-bottom:10px;}
+  .role-switch-option:hover{border-color:var(--accent);}
+  .role-switch-option.current{border-color:var(--accent);background:var(--accent-bg);cursor:default;}
+  .role-switch-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .role-switch-name{font-size:13.5px;font-weight:600;color:var(--text-primary);}
+  .role-switch-desc{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+
+  [data-modal-step]{display:none;}
+  [data-modal-step].active{display:block;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALcAAAA5CAYAAAB01Lo3AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAD+9JREFUeAHtXe9y08YWP7tyIDP0Dmam5dJPVZ7gmhJamPuh5gkIT4B5giQf75TESkKnHxOeAPMEJE+A+XITIG3DE+B+okDv4M5AJ2BJ556zu5IlWbLlRE4C6Dcj25JWuyvp7Nnzdw1QokSJEiVKlChxIiDgU8bl5j31bYn7sOO0Y+dml5sghA3gP4Knay1d3qkB4HxmfcLbgid3NuG723OA1nV17OnKrZHtBvvDENR9aXkDpDibONulfj4L+1kiFyppB/98vDbn+VCDEwYB2Dl/dbmV+wLEhvr2iIAHa6vT+ToIyTstXR6q9NHIrk/+Tp+b4MtapNytke3ikDqTdQNcp/L2YAHBA3IeXHkN9pwulBiJVOImwp4TAm7CiYNsQ0CIk4awFsBz/4ods6w9OAh87A8AiweVebax4wN1P6LzrcQ1Naj4C/TtQImRqAw7SbyiiyAO9kKLhU2szYajhIVbJAZ0oAj8GhEnvl2iMSpuDhxPQojn8OtqcL4Fs81v6BnQTKOI3IESIzGUuJmwz1+5fQ2OGS+311o0k9jweaMURcZEBUqko+c/JOUufmyK5N0dpxM7dmn5OUwaVxybZMUacRviOKIDJXKhJO4s5J0pJjajkAgy23yofro+K/dV3R5ZYErkQkncWWBlT1qd2LEk11aQKWKb/xAOC0zqGYLNgSvw1GlBiVwoiTsLp6x2OjEnsJuwnzNml6EAkBlROupXBTq5+lIihpK4TyrYWvI0ZeCUyI0TS9xvfnOq5y4W5KxAcY+4acJLiOaLHCyzy40B8cL1nw9wYCFaqR7JEicSYxH3S/JcCoT50SVFh0yIuYiA65QI94jUqsau3kXER/v7FQeO0vwlqC00SluJTwKpsSXGrkzOAtFO2rlfbDt2RVjrRIxzadf6AHdpAFTJqd366upSG0bg9ZM762+n3JUz7y02qVURYeWfV5ecvP05FGadeqj8VeRMKdd+WpBjloevrzqdr64s3aBhkeq5JMLuEnE20Je5uC4T9j8+WHVQpi7RSRJ2iRIHxdjEHUD4sJh6XMA8y8vn//1jLrf9DMnVfiDqIJm6jhIsitBsoLb90gP4qeHAxG1EjnbKqeqHfWsBcuLVk5/YQVFXcvo4EX9F4KmzB7sr19RWRtp9XKg71aH7cAjiZpAIksppiXs332z/bEMe+Hg8XLvExwuOu3/rv4HLJvRhtvlA7y81osUORdxDuDf0hNeEEXhDyqmOiz4Grl3i40Vo1QrtIWbfihU7FHEzPPQyTH7YGMW9e6KiB0DJtUuMA/YKfyHPwRlxUe+TWMnWrkRowqGdOGw9IVPd/bTkhp5w2XGSarpjrt0LufZSCyaBaHpXTyymytXRlLEg5Wz2dh2EdTO8jvnCO1w3V3TJkdNXpqNlow6eaMoa+s9gd21j7PS02LlEClza/ahpWf4wUC/fl5URTsDmUIHXiRvqzCtBrn6k9nczvKOZbST6VSMZeMo8s9T7MfUEz2bcPrWpDa7jclPXseNsJLtSiIfy1LS30HuvXlpSqK+/3l6rp9m7NdfGyXLtaHpXBTmNyxksI9fDtK4g5cwXNkhz7bRYoQfZgUvLf9FD1sR1eamfzxgtG005Q36xWNdtWzO67JjpafGT8/H7oRcKkHihKnUuJYNKNKjODlxx4iG7nEcKvhM4a3Uz6oO9tg7srqa8m6w2DPh5MQOYJlpwR6b53TTZVRu5+nS5uRFjLFl1GBxaLGGwm5ycL3fTziEpl8ljxyRrD3pWmUNgzpBVTzqkKXfUbxTrijNlQXElQ9hASnchzqGwPgN5fUjhropq5E2ADpHl+3SxP5MpIgoGO5tD5aLaRBgv7sDs0qDVC8U35tejsI2Mdz82tELo6C5xBpjpU5ANhrigBl1OFELcDOLePHLSzGmKe0cPuNJM40cra1e1RzIKzBFKYMBTLYpbYV06lzEDQg9oJpTdVQcOi+gg5PgWBSL2rAHG9ntOYePt6WoDILBq0TWc+KDLNEzhtjaH0rTO29OVGU3s5j6y2kBy4gVtCLkJhSDy3M6Ifp92V0i2FkEb80MZSwSFEXde7s0OHkSaJtmVflRcO+RG2J9F1EtGHULAMl0esMzXv8f0h8zcJ5wNRDGDVxgxgO+DZdoAFa+R63ofO7H92IyV1sfwGA3ixCoIoQhXsNMr2ad2Uj8Sd8M+TXlzeaosNCqQuTfJ3vMwRPbu7cs5elk22ciPLroOfXowQsvArJix88YNufYWjb6zuROQWTypMLEhc+/nsfAcTjnDMGOmNTSxYKz0tFAkaasZZLbZ1seUaLIx8nLJ5YwQyyLSt0t1kKbfbkoYBR8LKcOrQdTcK0RV14X5iZvFuEvLcfE0GaTme3bYJ0jpEzOWIEoThQ05UBjnZuTi3kLSt8gVVFUYQjc7d8Q33NpwbSlbMA6m1domwYupQnQg65QzvY9Yg+F9sge2NFxiC4s5h0GKmdjS3xmiCRMOp6ipbflNOEMF70Zaw6f1mBVGJMqae09mKQ1HNeVes/tgFTMrFErcDB34lJrEWn+1c+cec0gPrWOwa4dT7bxSlJhgeJp/4ownL7rGvMXXRhU2hl6HJGinlqqQheD48eSWVszqK44snihzIfZNcemiSVVzdsXxqzpFjfr1y6ruj+/1iWcqZVAps2PQvtxLPY45RTnVbx5UyXsV8ecuIjOBm9KnQFfQjeci/skkK7CiKMS9lBMN5tpfX/1PB44aalprdjXnEZpAEe+PVYeSpw0X5MHCylTaOiSzZHtVhKUUslaqfT1vehpGQotTV65KFU2oPXlDd5N+nyFCbK/0++BbmyB9/X70TBYXA6KmPhk5hxwDBHpgs2iXG7g3cL+Xlxsxc59XaZOYp39rHSNe3vX7fRJW/FwGJkLcrCi+2lnjztST546HawdAnpb7sl9lDJGEA3Pe+X1tfmiiLs8ShmtOKSV2EQ4CPZiC6XslphiGq1AZC0jU3MgEPSxFLSa30/OYXerCF1ZLnXvrky6CmsOz3hDUq5eXmDcEmV33QcF9urR8V/kSdHZUh7yQWox6R8wDPUcXJPEy58AqXCwJkB5UdUxcO4Aroxxuayz781v1Ym29M8IKorhUIOMToUSn83GAxpYdmBQD0xtvPdkXeVy/AeOiQmbN0IpEMxkHHvHWtzN3aADp+/yWBhmn3YWyvyI+DLdotj+XSwQw5UbUl8D9CPqE3kbYp4rIbYiYGHGnBVUdL9cGoygZohtHkdTynhPUkm95hcgAwNB1nx9KUQxEoBROGb0XED/AuOCBbZEtWekMIqpAdpWMzHEbR52ZxPfUo3ZT+0SzCPd3jD6JtINFpXWx+Y+sJGpUp6WP5cXE0sxK9BEobGnEw5xbGh1qd1Vk1qG4OPC0fauQ5ZaH9SkHJpb9rrySKGosn7D1xAcj05U4mTiJ+aOH7FOhxK0i/azKPPgwhzyVmjHOScPHKmuXOByExVamdo6CuowlO3ACUBhxv36yuu76ooEe3v172rvIuZHari06F67c3oASHy9+Ub6A0f4AjlE5QSiEuJmwEUXdw8rFgEPzeiRKq0Y8Ojd7iRIRHJq4X22v8jIOc2QJuRYQtpa34Z5H4siFAoKjpJRnEX0oUWIcjDIF2jAKQtz0ff9ZQNj/21mbZwsJL1x/4cow93N+EGErRwa18xeUKJETqZxbothD5QJFO8+afVKKH17urD2gkVL39KpR9/+edgshbG6/916HXQpxsL8wYUWXY8h9hJrg/pF7WiBuDQu55T+98lFcD6MFpdib8qy75yKKsV5eTgwkDSDi76eg0oqW/WNnZUOCdZbc3Y+43XB/CGiuesb6yuvHPzWpTjvYT95bkIuadwm7zwWpxO0Kd9MCSzkezBokTmYNnlwECx8I7XDo+iAWL1wtToF0P/RDaH0iGBgTfz6+c9NF3KABVw0MtOpbiLlXj9fmp05516KDVw8m64Gv4igiwQ8+1nvCXaD6Gl9+f1vHpPA/vonBeA+yyUMP3OYfO6uLF64sq2dBhKwHikllC/eHQGrrA/Xdr9N3PdiP97XyMFJPSdwRpBI3J/2+2llr0886r0FCL6l7+rTfSuPgZmWpmRfbP9sHMffxdRVw7egxX0JVesJGidcxCNY5gOtecTU0/whGVhvifvf57/5IZKorpxBxciZkiCQxE7H0cx+ZmNC/L1BWUXKaGnFPqu/Vk5+enf/ux2SwkSKsaFmpM0tSB7oUuOj7GMR+88yk4sstkAseekr8onqGzphuj8OHj/iPsD4iZCqUvGSDJTRXoJe0TkSwTpxujwgi9sDVFC+ZcNxHxEm6eZYdNp7LJjG4GoJbxcR59vsQYUePtN+ddscOPuoJy0Qmik5U4SVwYBf3kwkqTKRQ/TIJvNqjetsJ6nqx7WxawvqNflZJ9ucyMbErKuK8/u8dJkye+apZYt2X3y+FpjXzPBRxf0C59fXVHzswAuoaHwoR/eATRaZCydzbQ/cay8/hQZ1qX49ugld79XGBCPIBcb3fXj9ea2bVyS/6NcnmxiVfxyEB6wJMggFxRHa5z4y5Vje3ZfpI0gNuJbn+1GkVZabq9IQOK/UjUYxJEYifB93jDe4Pcf02DAER9r/MXXQKW2M8Ap6RsB9SXHj9nwqGmgL5hdJXg7iWMyWtWvCvwqTYfZMoapvgeJsGg0POGzup3Cj58IPFRG0i5ERb+LDlCmtzf/p9d6ZgIuj1pmxFrsCrIAwS4zntZFLx3TQzne3fh+pbJ00EGpY9RDOBiYwTthYVRJtmi4nIwGZZDFuFNfhwV8oDBGZ9Bshl5zZEzlumlyq+bjc2yHpSPXXauxVwLkXYZpGV5JR/fFDx0TbkMXmOhLDVJw0W1N+1inQ5pr3QSEj2K4ARncjic4tkdzsj/u2zR2Ehr+G63aDz9FhcYYJmjq3c8DHCnvwa3J7XC2cCVwo7o5jqE4ktvMANWznMNViFMUEz1Qxv9AzO8T2iNok6yWUtDglb56Dq53ikeagfIQqP5z5PjhsMEhWIoF31jwlRJe1oFpfXs40OfJeAA7ZotmODkfklorZ8BN90PI0oaZA+J/ED6fshDEH0Hv2UbKSDg7m0FkfKRfpHYyIhr/zgX26vqaWMA6XxKAk7AEcj0uhleVQlJ09xsgTJ9+6+VfNRLfUAEFmrcGra3ySlWMmzrLCRCLDCVhCefdjshr4xu5F5MKtNVZZs8xj8n5QQhSt8bPmBEiMxsUwcJuSAgzORHQenYW9e39qDDXLCPCeT5httrUFbWWQ8cSMor/QDvd/VDhcicOLU6hpfLAT3kubZ1BzdlMVwmTIykVqjo+nGAD/TMnw4HyZG3AwmaCngRlExJgfsQ0MPsuRyE6KNnryW/HsT3icb/8V+CpcpHXhfc9xLYMZM2NYLQCmOjIPPSs1+YdYLz2t6fE4ixvT+aSVWldyyRIkSJUqUKFGixAHxf8Sq1JPcJ5XLAAAAAElFTkSuQmCC" alt="Каразінський університет" style="height:34px;width:auto;">
+    </div>
+
+    <div class="nav-group-label">Головне</div>
+    <nav class="nav">
+      <a class="nav-item"><i class="ti ti-layout-dashboard"></i>Дашборд</a>
+      <a class="nav-item active"><i class="ti ti-school"></i>Користувачі</a>
+      <a class="nav-item"><i class="ti ti-user-plus"></i>Абітурієнти</a>
+      <a class="nav-item"><i class="ti ti-download"></i>Архів</a>
+    </nav>
+
+    <div class="nav-group-label">Фінанси та документи</div>
+    <nav class="nav">
+      <a class="nav-item"><i class="ti ti-file-text"></i>Заявки<span class="spacer"></span><span class="nav-badge">3</span></a>
+      <a class="nav-item"><i class="ti ti-id-badge-2"></i>Довідки</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <a class="nav-item"><i class="ti ti-settings"></i>Налаштування</a>
+      <a class="nav-item exit" id="roleSwitchBtn"><i class="ti ti-logout"></i>Вийти</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="user-chip">
+        <div class="user-avatar">НК</div>
+        <div>
+          <div class="user-email">n.kravets@karazin.ua</div>
+          <div class="user-role">Кадровий відділ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ===================== СПИСОК КЛІЄНТІВ ===================== -->
+      <div data-view="list" class="active">
+        <div class="content-header">
+          <div>
+            <h1 class="page-title">Користувачі</h1>
+          </div>
+          <button class="btn-add" id="openCreateModal"><i class="ti ti-user-plus"></i>Додати користувача</button>
+        </div>
+        <div style="height:20px;"></div>
+
+        <div class="status-tabs">
+          <div class="status-tab active" data-filter="all">Усі</div>
+          <div class="status-tab" data-filter="lead">Лід</div>
+          <div class="status-tab" data-filter="applicant">Абітурієнт</div>
+          <div class="status-tab" data-filter="student">Студент</div>
+          <div class="status-tab" data-filter="archive">Випускник</div>
+        </div>
+
+        <div class="search-row">
+          <div class="search-bar">
+            <i class="ti ti-search"></i>
+            <input type="text" placeholder="Пошук студента">
+          </div>
+        </div>
+
+        <div class="list">
+
+          <div class="client-row" data-status="student" data-name="Ковальчук Марія Олегівна" data-type="resident">
+            <div class="client-main">
+              <div class="client-name">Ковальчук Марія Олегівна</div>
+              <div class="client-sub">Україна</div>
+            </div>
+            <div class="client-col"><div class="value">Радіофізики</div><div class="label">Факультет</div></div>
+            <span class="status-pill student">Студент</span>
+            <div class="row-actions">
+              <div class="row-icon-btn" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></div>
+              <div class="row-icon-btn danger" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+            </div>
+          </div>
+
+          <div class="client-row" data-status="student" data-name="Аббазаде Фахраддін" data-type="foreign">
+            <div class="client-main">
+              <div class="client-name">Аббазаде Фахраддін</div>
+              <div class="client-sub">Азербайджан</div>
+            </div>
+            <div class="client-col"><div class="value">Міжн. бізнес</div><div class="label">Факультет</div></div>
+            <span class="status-pill student">Студент</span>
+            <div class="row-actions">
+              <div class="row-icon-btn" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></div>
+              <div class="row-icon-btn danger" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+            </div>
+          </div>
+
+          <div class="client-row" data-status="student" data-name="Демченко Павло Ігорович" data-type="resident">
+            <div class="client-main">
+              <div class="client-name">Демченко Павло Ігорович</div>
+              <div class="client-sub">Україна</div>
+            </div>
+            <div class="client-col"><div class="value">Комп'ютерних наук</div><div class="label">Факультет</div></div>
+            <span class="status-pill student">Студент</span>
+            <div class="row-actions">
+              <div class="row-icon-btn" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></div>
+              <div class="row-icon-btn danger" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+            </div>
+          </div>
+
+          <div class="client-row" data-status="applicant" data-name="Nguyen Thi Linh" data-type="foreign">
+            <div class="client-main">
+              <div class="client-name">Nguyen Thi Linh</div>
+              <div class="client-sub">В'єтнам</div>
+            </div>
+            <div class="client-col"><div class="value">Візуальне мистецтво</div><div class="label">Програма</div></div>
+            <span class="status-pill applicant">Абітурієнт</span>
+            <div class="row-actions">
+              <div class="row-icon-btn" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></div>
+              <div class="row-icon-btn danger" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+            </div>
+          </div>
+
+          <div class="client-row" data-status="lead" data-name="Karim Benali" data-type="foreign">
+            <div class="client-main">
+              <div class="client-name">Karim Benali</div>
+              <div class="client-sub">Індія</div>
+            </div>
+            <div class="client-col"><div class="value">Середня освіта</div><div class="label">Інтерес</div></div>
+            <span class="status-pill lead">Лід</span>
+            <div class="row-actions">
+              <div class="row-icon-btn" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></div>
+              <div class="row-icon-btn danger" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+            </div>
+          </div>
+
+          <div class="client-row" data-status="archive" data-name="Литвиненко Петро Сергійович" data-type="resident">
+            <div class="client-main">
+              <div class="client-name">Литвиненко Петро Сергійович</div>
+              <div class="client-sub">Україна</div>
+            </div>
+            <div class="client-col"><div class="value">Економічний</div><div class="label">Факультет</div></div>
+            <span class="status-pill archive">Випускник</span>
+            <div class="row-actions">
+              <div class="row-icon-btn" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></div>
+              <div class="row-icon-btn danger" onclick="event.stopPropagation()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===================== ДЕТАЛІ КЛІЄНТА ===================== -->
+      <div data-view="detail">
+        <div class="back-link" id="backToList"><i class="ti ti-chevron-left"></i>Назад до користувачів</div>
+
+        <div class="detail-head">
+          <div class="detail-top">
+            <div class="detail-title-row">
+              <div class="detail-avatar" id="detailAvatar" style="background:#7C5CE0;">АФ</div>
+              <div>
+                <div class="detail-name" id="detailName">Аббазаде Фахраддін</div>
+                <div class="detail-badges">
+                  <span class="type-badge foreign" id="detailType">Іноземець</span>
+                  <span class="status-pill student" id="detailStatus">Студент</span>
+                </div>
+              </div>
+            </div>
+            <div class="detail-actions">
+              <div class="icon-btn" id="editClientBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></div>
+              <div class="icon-btn danger"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></div>
+            </div>
+          </div>
+
+          <div class="status-change-row" style="margin-top:16px;">
+            <label>Статус:</label>
+            <select class="status-select" id="detailStatusSelect">
+              <option value="lead">Лід</option>
+              <option value="applicant">Абітурієнт</option>
+              <option value="student" selected>Студент</option>
+              <option value="archive">Випускник / Архів</option>
+            </select>
+            <button class="btn-save-status" id="saveDetailStatusBtn">Зберегти</button>
+          </div>
+
+          <div class="detail-fields">
+            <div class="detail-field"><div class="label">Email</div><div class="value" id="detailEmail">f.abbazade@gmail.com</div></div>
+            <div class="detail-field"><div class="label">Телефон</div><div class="value" id="detailPhone">+994 55 123 4567</div></div>
+            <div class="detail-field"><div class="label">Дата народження</div><div class="value" id="detailDob">14.03.2004</div></div>
+            <div class="detail-field"><div class="label">Громадянство</div><div class="value" id="detailCitizenship">Азербайджан</div></div>
+            <div class="detail-field"><div class="label">Факультет</div><div class="value">Міжнародний бізнес</div></div>
+            <div class="detail-field"><div class="label">Курс</div><div class="value">2 курс, магістратура</div></div>
+            <div class="detail-field"><div class="label">Дата зарахування</div><div class="value">01.09.2024</div></div>
+            <div class="detail-field"><div class="label">Створено</div><div class="value">12.05.2024</div></div>
+          </div>
+        </div>
+
+        <div class="section-title">Документи <span style="color:var(--text-muted);font-weight:500;">(3 з 5 завантажено)</span></div>
+        <div class="doc-grid">
+          <div class="doc-card">
+            <div class="doc-top">
+              <div class="doc-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></div>
+              <div>
+                <div class="doc-name">Закордонний паспорт</div>
+                <div class="doc-meta">passport_scan.pdf · 1.4 MB</div>
+              </div>
+            </div>
+            <div class="doc-actions">
+              <div class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <div class="icon-btn danger"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+            </div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-top">
+              <div class="doc-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></div>
+              <div>
+                <div class="doc-name">Атестат / диплом (з апостилем)</div>
+                <div class="doc-meta">diploma_apostille.pdf · 2.1 MB</div>
+              </div>
+            </div>
+            <div class="doc-actions">
+              <div class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <div class="icon-btn danger"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+            </div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-top">
+              <div class="doc-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></div>
+              <div>
+                <div class="doc-name">Медична довідка</div>
+                <div class="doc-meta">medical_cert.jpg · 640 KB</div>
+              </div>
+            </div>
+            <div class="doc-actions">
+              <div class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <div class="icon-btn danger"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+            </div>
+          </div>
+          <div class="doc-card missing">
+            <div class="doc-top">
+              <div class="doc-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 12v6"/><path d="M9 15h6"/></svg></div>
+              <div>
+                <div class="doc-name">Дозвіл на навчання (віза)</div>
+                <div class="doc-meta">Не завантажено</div>
+              </div>
+            </div>
+            <button class="btn-upload-small"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>Завантажити</button>
+          </div>
+          <div class="doc-card missing">
+            <div class="doc-top">
+              <div class="doc-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 12v6"/><path d="M9 15h6"/></svg></div>
+              <div>
+                <div class="doc-name">Поліс страхування</div>
+                <div class="doc-meta">Не завантажено</div>
+              </div>
+            </div>
+            <button class="btn-upload-small"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>Завантажити</button>
+          </div>
+        </div>
+
+        <div class="section-title">Пов'язані контракти</div>
+        <div class="linked-row">
+          <div class="linked-main">
+            <div class="linked-name">Магістратура для іноземців · № 24-21</div>
+            <div class="linked-sub">1 800 $ / рік · є заборгованість 6 у.о.</div>
+          </div>
+          <span class="status-pill" style="color:var(--danger);background:var(--danger-bg);">Є борг</span>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ===================== МОДАЛЬНЕ ВІКНО СТВОРЕННЯ КЛІЄНТА ===================== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Новий користувач</span>
+      <span class="modal-close" id="closeModalBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></span>
+    </div>
+    <p class="modal-sub">Крок <span id="stepIndicator">1</span> з 2</p>
+
+    <!-- Крок 1: основні дані -->
+    <div data-modal-step="1" class="active">
+      <div class="step-label">Країна походження</div>
+      <div class="radio-group" style="margin-bottom:14px;">
+        <label class="radio-option">
+          <input type="radio" name="fieldCountryRadio" value="ukraine" checked>
+          <span class="radio-dot"></span>
+          Україна
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="fieldCountryRadio" value="other">
+          <span class="radio-dot"></span>
+          Інша країна
+        </label>
+      </div>
+      <div class="field" id="fieldCountryOtherWrap" style="display:none;margin-bottom:14px;">
+        <label class="field-label">Оберіть країну</label>
+        <select class="input" id="fieldCountrySelect">
+          <option value="">Оберіть країну</option>
+          <option>Азербайджан</option>
+          <option>Узбекистан</option>
+          <option>Туркменістан</option>
+          <option>Індія</option>
+          <option>Нігерія</option>
+          <option>Марокко</option>
+          <option>Туреччина</option>
+          <option>Китай</option>
+          <option>В'єтнам</option>
+          <option value="__other__">Інше</option>
+        </select>
+      </div>
+
+      <div class="step-label">Тип користувача</div>
+      <div class="status-select-row" style="margin-bottom:22px;">
+        <div class="status-option selected" data-status="lead">Лід</div>
+        <div class="status-option" data-status="applicant">Абітурієнт</div>
+        <div class="status-option" data-status="student">Студент</div>
+        <div class="status-option" data-status="archive">Випускник</div>
+      </div>
+
+      <div class="step-label">Контактні дані</div>
+      <div class="field">
+        <label class="field-label">ПІБ</label>
+        <input class="input" id="fieldFullName" type="text" placeholder="Повне ім'я як в документах">
+      </div>
+      <div class="field-row">
+        <div>
+          <label class="field-label">Email</label>
+          <input class="input" id="fieldEmail" type="text" placeholder="name@example.com">
+        </div>
+        <div>
+          <label class="field-label">Телефон</label>
+          <input class="input" id="fieldPhone" type="text" placeholder="+380(XX) XXX-XX-XX">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Дата народження</label>
+        <input class="input" id="fieldDob" type="text" placeholder="Обрати значення">
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modal-secondary" id="cancelModalBtn">Скасувати</button>
+        <button class="btn-modal-primary" id="toStep2Btn" disabled>Продовжити</button>
+      </div>
+    </div>
+
+    <!-- Крок 2: документи -->
+    <div data-modal-step="2">
+      <div class="step-label">Необхідні документи</div>
+
+      <div class="modal-doc-list" id="modalDocList"></div>
+
+      <div class="modal-actions">
+        <button class="btn-modal-secondary" id="backToStep1Btn">Назад</button>
+        <button class="btn-modal-primary" id="saveClientBtn" disabled>Створити користувача</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== МОДАЛЬНЕ ВІКНО РЕДАГУВАННЯ ===================== -->
+<div class="modal-overlay" id="editModalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Редагувати користувача</span>
+      <span class="modal-close" id="closeEditModalBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></span>
+    </div>
+    <p class="modal-sub">Оновіть дані користувача</p>
+
+    <div class="step-label">Країна походження</div>
+    <div class="radio-group" style="margin-bottom:14px;">
+      <label class="radio-option">
+        <input type="radio" name="editCountryRadio" value="ukraine">
+        <span class="radio-dot"></span>
+        Україна
+      </label>
+      <label class="radio-option">
+        <input type="radio" name="editCountryRadio" value="other" checked>
+        <span class="radio-dot"></span>
+        Інша країна
+      </label>
+    </div>
+    <div class="field" id="editCountryOtherWrap" style="margin-bottom:14px;">
+      <label class="field-label">Оберіть країну</label>
+      <select class="input" id="editCountrySelect">
+        <option value="">Оберіть країну</option>
+        <option selected>Азербайджан</option>
+        <option>Узбекистан</option>
+        <option>Туркменістан</option>
+        <option>Індія</option>
+        <option>Нігерія</option>
+        <option>Марокко</option>
+        <option>Туреччина</option>
+        <option>Китай</option>
+        <option>В'єтнам</option>
+        <option value="__other__">Інше</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="field-label">ПІБ</label>
+      <input class="input" id="editFullName" type="text" value="Аббазаде Фахраддін">
+    </div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Email</label>
+        <input class="input" id="editEmail" type="text" value="f.abbazade@gmail.com">
+      </div>
+      <div>
+        <label class="field-label">Телефон</label>
+        <input class="input" id="editPhone" type="text" value="+994 55 123 4567">
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Дата народження</label>
+      <input class="input" id="editDob" type="text" value="14.03.2004">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-secondary" id="cancelEditModalBtn">Скасувати</button>
+      <button class="btn-modal-primary" id="saveEditBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M20 6 9 17l-5-5"/></svg> Зберегти зміни</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- Перехід зі списку в деталі ----------
+  document.querySelectorAll('.client-row').forEach(row => {
+    row.addEventListener('click', () => {
+      document.querySelector('[data-view="list"]').classList.remove('active');
+      document.querySelector('[data-view="detail"]').classList.add('active');
+    });
+  });
+  document.getElementById('backToList').addEventListener('click', () => {
+    document.querySelector('[data-view="detail"]').classList.remove('active');
+    document.querySelector('[data-view="list"]').classList.add('active');
+  });
+
+  // ---------- Фільтр за статусом ----------
+  document.querySelectorAll('.status-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const filter = tab.dataset.filter;
+      document.querySelectorAll('.client-row').forEach(row => {
+        row.style.display = (filter === 'all' || row.dataset.status === filter) ? 'flex' : 'none';
+      });
+    });
+  });
+
+  // ---------- Модальне вікно ----------
+  const overlay = document.getElementById('modalOverlay');
+  document.getElementById('openCreateModal').addEventListener('click', () => { overlay.classList.add('open'); goToStep(1); });
+  document.getElementById('closeModalBtn').addEventListener('click', () => overlay.classList.remove('open'));
+  document.getElementById('cancelModalBtn').addEventListener('click', () => overlay.classList.remove('open'));
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('open'); });
+
+  function goToStep(n){
+    document.querySelectorAll('[data-modal-step]').forEach(s => s.classList.toggle('active', s.dataset.modalStep == n));
+    document.getElementById('stepIndicator').textContent = n;
+  }
+  document.getElementById('toStep2Btn').addEventListener('click', () => { renderDocList(); goToStep(2); });
+  document.getElementById('backToStep1Btn').addEventListener('click', () => goToStep(1));
+  document.getElementById('saveClientBtn').addEventListener('click', () => overlay.classList.remove('open'));
+
+  document.querySelectorAll('.status-option').forEach(p => {
+    p.addEventListener('click', () => {
+      p.closest('.status-select-row').querySelectorAll('.status-option').forEach(o => o.classList.remove('selected'));
+      p.classList.add('selected');
+    });
+  });
+
+  // ---------- Країна походження (створення) ----------
+  const fieldCountryRadios = document.querySelectorAll('input[name="fieldCountryRadio"]');
+  const fieldCountryOtherWrap = document.getElementById('fieldCountryOtherWrap');
+  const fieldCountrySelect = document.getElementById('fieldCountrySelect');
+  fieldCountryRadios.forEach(r => {
+    r.addEventListener('change', () => {
+      const isOther = document.querySelector('input[name="fieldCountryRadio"]:checked').value === 'other';
+      fieldCountryOtherWrap.style.display = isOther ? 'block' : 'none';
+      checkStep1Valid();
+    });
+  });
+  fieldCountrySelect.addEventListener('change', checkStep1Valid);
+
+  // ---------- Країна походження (редагування) ----------
+  const editCountryRadios = document.querySelectorAll('input[name="editCountryRadio"]');
+  const editCountryOtherWrap = document.getElementById('editCountryOtherWrap');
+  const editCountrySelect = document.getElementById('editCountrySelect');
+  editCountryRadios.forEach(r => {
+    r.addEventListener('change', () => {
+      const isOther = document.querySelector('input[name="editCountryRadio"]:checked').value === 'other';
+      editCountryOtherWrap.style.display = isOther ? 'block' : 'none';
+    });
+  });
+
+  // ---------- Валідація кроку 1 (створення) ----------
+  function checkStep1Valid(){
+    const ids = ['fieldFullName','fieldEmail','fieldPhone','fieldDob'];
+    let allFilled = ids.every(id => document.getElementById(id).value.trim().length > 0);
+    const isOther = document.querySelector('input[name="fieldCountryRadio"]:checked').value === 'other';
+    if (isOther){
+      allFilled = allFilled && fieldCountrySelect.value.trim().length > 0;
+    }
+    document.getElementById('toStep2Btn').disabled = !allFilled;
+  }
+  document.querySelectorAll('#fieldFullName,#fieldEmail,#fieldPhone,#fieldDob').forEach(el => {
+    el.addEventListener('input', checkStep1Valid);
+  });
+
+  // Скидання форми при відкритті модалки створення
+  document.getElementById('openCreateModal').addEventListener('click', () => {
+    ['fieldFullName','fieldEmail','fieldPhone','fieldDob'].forEach(id => document.getElementById(id).value = '');
+    document.querySelector('input[name="fieldCountryRadio"][value="ukraine"]').checked = true;
+    fieldCountryOtherWrap.style.display = 'none';
+    fieldCountrySelect.value = '';
+    document.getElementById('toStep2Btn').disabled = true;
+    document.getElementById('saveClientBtn').disabled = true;
+  });
+
+  const docSets = {
+    resident: {
+      lead: [],
+      applicant: [
+        {name:'Паспорт громадянина', required:true, file:'passport.pdf', size:'1.1 MB'},
+        {name:'Атестат / диплом', required:true, file:'diploma.pdf', size:'1.8 MB'}
+      ],
+      student: [
+        {name:'Паспорт громадянина', required:true, file:'passport.pdf', size:'1.1 MB'},
+        {name:'ІПН', required:true, file:'inn.pdf', size:'0.4 MB'},
+        {name:'Атестат / диплом', required:true, file:'diploma.pdf', size:'1.8 MB'},
+        {name:'Військово-обліковий документ', required:false, file:'military_id.pdf', size:'0.9 MB'}
+      ],
+      archive: [
+        {name:'Паспорт громадянина', required:true, file:'passport.pdf', size:'1.1 MB'},
+        {name:'Атестат / диплом', required:true, file:'diploma.pdf', size:'1.8 MB'},
+        {name:'Диплом про закінчення', required:true, file:'diploma_final.pdf', size:'2.0 MB'}
+      ]
+    },
+    foreign: {
+      lead: [],
+      applicant: [
+        {name:'Закордонний паспорт', required:true, file:'passport_intl.pdf', size:'1.3 MB'},
+        {name:'Атестат / диплом (з апостилем)', required:true, file:'diploma_apostille.pdf', size:'2.1 MB'}
+      ],
+      student: [
+        {name:'Закордонний паспорт', required:true, file:'passport_intl.pdf', size:'1.3 MB'},
+        {name:'Атестат / диплом (з апостилем)', required:true, file:'diploma_apostille.pdf', size:'2.1 MB'},
+        {name:'Дозвіл на навчання (віза)', required:true, file:'study_permit.pdf', size:'0.7 MB'},
+        {name:'Медична довідка', required:true, file:'medical_cert.jpg', size:'0.6 MB'},
+        {name:'Поліс страхування', required:false, file:'insurance_policy.pdf', size:'0.5 MB'}
+      ],
+      archive: [
+        {name:'Закордонний паспорт', required:true, file:'passport_intl.pdf', size:'1.3 MB'},
+        {name:'Диплом про закінчення', required:true, file:'diploma_final.pdf', size:'2.0 MB'}
+      ]
+    }
+  };
+
+  const fileIconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>';
+  const uploadIconSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>';
+  const checkIconSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  function renderDocList(){
+    const isOther = document.querySelector('input[name="fieldCountryRadio"]:checked').value === 'other';
+    const type = isOther ? 'foreign' : 'resident';
+    const status = document.querySelector('.status-option.selected').dataset.status;
+    const docs = docSets[type][status] || [];
+    const list = document.getElementById('modalDocList');
+    list.innerHTML = '';
+    if (docs.length === 0){
+      list.innerHTML = '<p class="field-hint">Для типу «Лід» документи ще не потрібні — вони з’являться, коли користувач стане абітурієнтом.</p>';
+      updateSaveButtonState();
+      return;
+    }
+    docs.forEach(d => {
+      const el = document.createElement('div');
+      el.className = 'modal-doc-item';
+      el.dataset.required = d.required ? '1' : '0';
+      el.dataset.file = d.file;
+      el.dataset.size = d.size;
+      el.dataset.reqText = d.name + ' — потребує завантаження';
+      el.innerHTML =
+        '<div class="modal-doc-item-icon">' + fileIconSvg + '</div>' +
+        '<div class="modal-doc-item-body">' +
+          '<div class="doc-item-name">' + d.name + '</div>' +
+          '<div class="doc-item-req">PDF, JPG, PNG. Максимальний розмір файлу — 10 MB.</div>' +
+        '</div>' +
+        '<button class="doc-upload-circle" title="Завантажити">' + uploadIconSvg + '</button>';
+      list.appendChild(el);
+    });
+    updateSaveButtonState();
+  }
+
+  // Клік по круглій кнопці — симулюємо прикріплення / видалення файлу
+  document.getElementById('modalDocList').addEventListener('click', (e) => {
+    const circleBtn = e.target.closest('.doc-upload-circle');
+    const removeLink = e.target.closest('.doc-item-req-remove');
+
+    if (circleBtn){
+      const item = circleBtn.closest('.modal-doc-item');
+      item.classList.add('attached');
+      circleBtn.classList.add('done');
+      circleBtn.innerHTML = checkIconSvg;
+      item.querySelector('.doc-item-req').innerHTML =
+        item.dataset.file + ' · ' + item.dataset.size + '<span class="doc-item-req-remove">Видалити</span>';
+      updateSaveButtonState();
+    }
+
+    if (removeLink){
+      e.stopPropagation();
+      const item = removeLink.closest('.modal-doc-item');
+      item.classList.remove('attached');
+      const circle = item.querySelector('.doc-upload-circle');
+      circle.classList.remove('done');
+      circle.innerHTML = uploadIconSvg;
+      item.querySelector('.doc-item-req').textContent = 'PDF, JPG, PNG. Максимальний розмір файлу — 10 MB.';
+      updateSaveButtonState();
+    }
+  });
+
+  function updateSaveButtonState(){
+    const items = document.querySelectorAll('#modalDocList .modal-doc-item');
+    const requiredItems = Array.from(items).filter(i => i.dataset.required === '1');
+    const allRequiredAttached = requiredItems.every(i => i.classList.contains('attached'));
+    document.getElementById('saveClientBtn').disabled = !allRequiredAttached;
+  }
+
+  // ---------- Зміна статусу в картці користувача ----------
+  document.getElementById('saveDetailStatusBtn').addEventListener('click', () => {
+    const val = document.getElementById('detailStatusSelect').value;
+    const map = {
+      lead: ['lead', 'Лід'],
+      applicant: ['applicant', 'Абітурієнт'],
+      student: ['student', 'Студент'],
+      archive: ['archive', 'Випускник']
+    };
+    const [cls, label] = map[val];
+    const pill = document.getElementById('detailStatus');
+    pill.className = 'status-pill ' + cls;
+    pill.textContent = label;
+  });
+
+  // ---------- Редагування картки користувача ----------
+  const editOverlay = document.getElementById('editModalOverlay');
+  document.getElementById('editClientBtn').addEventListener('click', () => editOverlay.classList.add('open'));
+  document.getElementById('closeEditModalBtn').addEventListener('click', () => editOverlay.classList.remove('open'));
+  document.getElementById('cancelEditModalBtn').addEventListener('click', () => editOverlay.classList.remove('open'));
+  editOverlay.addEventListener('click', (e) => { if (e.target === editOverlay) editOverlay.classList.remove('open'); });
+
+  document.getElementById('saveEditBtn').addEventListener('click', () => {
+    document.getElementById('detailName').textContent = document.getElementById('editFullName').value;
+    document.getElementById('detailEmail').textContent = document.getElementById('editEmail').value;
+    document.getElementById('detailPhone').textContent = document.getElementById('editPhone').value;
+    document.getElementById('detailDob').textContent = document.getElementById('editDob').value;
+
+    const isUkraine = document.querySelector('input[name="editCountryRadio"]:checked').value === 'ukraine';
+    document.getElementById('detailCitizenship').textContent = isUkraine ? 'Україна' : editCountrySelect.value;
+
+    const typeBadge = document.getElementById('detailType');
+    typeBadge.className = 'type-badge ' + (isUkraine ? 'resident' : 'foreign');
+    typeBadge.textContent = isUkraine ? 'Резидент' : 'Іноземець';
+
+    editOverlay.classList.remove('open');
+  });
+
+  // ---------- Перемикач ролей ----------
+  const roleSwitchOverlay = document.getElementById('roleSwitchOverlay');
+  document.getElementById('roleSwitchBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    roleSwitchOverlay.classList.add('open');
+  });
+  document.getElementById('closeRoleSwitchBtn').addEventListener('click', () => roleSwitchOverlay.classList.remove('open'));
+  roleSwitchOverlay.addEventListener('click', (e) => { if (e.target === roleSwitchOverlay) roleSwitchOverlay.classList.remove('open'); });
+  document.querySelectorAll('.role-switch-option[data-href]').forEach(opt => {
+    opt.addEventListener('click', () => { window.location.href = opt.dataset.href; });
+  });
+</script>
+
+<!-- ===================== МОДАЛЬНЕ ВІКНО ПЕРЕМИКАННЯ РОЛІ ===================== -->
+<div class="modal-overlay" id="roleSwitchOverlay">
+  <div class="modal" style="width:380px;">
+    <div class="modal-header">
+      <span class="modal-title">Перемкнути роль</span>
+      <span class="modal-close" id="closeRoleSwitchBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></span>
+    </div>
+    <p class="modal-sub">Для демонстрації прототипу — обери, чий інтерфейс показати</p>
+
+    <div class="role-switch-option current">
+      <div class="role-switch-icon" style="background:#E4F5F2;color:#1E9E8C;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div>
+        <div class="role-switch-name">Кадровий відділ</div>
+        <div class="role-switch-desc">Ви тут зараз</div>
+      </div>
+    </div>
+    <div class="role-switch-option" data-href="контракти-v2.html">
+      <div class="role-switch-icon" style="background:var(--violet-bg);color:var(--violet);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6"/><path d="M9 16h6"/><path d="M4 4h16v16H4z"/></svg></div>
+      <div>
+        <div class="role-switch-name">Контрактний відділ</div>
+        <div class="role-switch-desc">Контракти, оплати, боржники</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
