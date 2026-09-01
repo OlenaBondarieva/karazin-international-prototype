@@ -21,7 +21,7 @@
   .app{display:flex;min-height:100vh;}
 
   /* ---------- Sidebar ---------- */
-  .sidebar{width:280px;flex-shrink:0;background:var(--bg-sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 20px;}
+  .sidebar{width:280px;flex-shrink:0;background:var(--bg-sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 20px;height:100vh;position:sticky;top:0;overflow-y:auto;}
   .logo{display:flex;align-items:center;gap:10px;padding:0 4px 20px;}
   .logo-mark{width:34px;height:34px;flex-shrink:0;}
   .logo-text{font-size:13px;font-weight:700;line-height:1.25;letter-spacing:0.2px;}
@@ -35,6 +35,7 @@
   .nav-item:hover{background:#F5F5F3;}
   .nav-item i{font-size:19px;flex-shrink:0;}
   .nav-item.active{color:var(--accent);background:var(--accent-bg);font-weight:600;}
+  .nav-item.disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
   .nav-item .spacer{flex:1;}
   .nav-badge{font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:var(--radius-pill);padding:1px 7px;line-height:1.5;}
   .sidebar-bottom{margin-top:auto;padding-top:16px;}
@@ -79,7 +80,7 @@
 
   /* ---------- List ---------- */
   .list{display:flex;flex-direction:column;gap:10px;}
-  .client-row{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 22px;display:flex;align-items:center;gap:20px;cursor:pointer;transition:border-color .12s ease;}
+  .client-row{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 22px;display:grid;grid-template-columns:1.6fr 1fr 0.9fr auto;align-items:center;gap:20px;cursor:pointer;transition:border-color .12s ease;}
   .client-row:hover{border-color:var(--accent);}
   .client-main{flex:1.4;min-width:0;}
   .client-name{font-size:14.5px;font-weight:600;color:var(--text-primary);}
@@ -88,7 +89,7 @@
   .client-col .value{font-size:13.5px;color:var(--text-primary);font-weight:600;}
   .client-col .label{font-size:12px;color:var(--text-muted);margin-top:3px;}
 
-  .status-pill{font-size:12px;font-weight:600;padding:5px 12px;border-radius:var(--radius-pill);white-space:nowrap;}
+  .status-pill{font-size:12px;font-weight:600;padding:5px 12px;border-radius:var(--radius-pill);white-space:nowrap;justify-self:start;}
   .status-pill.lead{color:var(--text-secondary);background:#F0F0EE;}
   .status-pill.applicant{color:#8A6410;background:var(--gold-bg);}
   .status-pill.student{color:var(--success);background:var(--success-bg);}
@@ -233,20 +234,20 @@
 
     <div class="nav-group-label">Головне</div>
     <nav class="nav">
-      <a class="nav-item"><i class="ti ti-layout-dashboard"></i>Дашборд</a>
+      <a class="nav-item disabled"><i class="ti ti-layout-dashboard"></i>Дашборд</a>
       <a class="nav-item active"><i class="ti ti-school"></i>Користувачі</a>
-      <a class="nav-item"><i class="ti ti-user-plus"></i>Абітурієнти</a>
-      <a class="nav-item"><i class="ti ti-download"></i>Архів</a>
+      <a class="nav-item disabled"><i class="ti ti-user-plus"></i>Абітурієнти</a>
+      <a class="nav-item disabled"><i class="ti ti-download"></i>Архів</a>
     </nav>
 
     <div class="nav-group-label">Фінанси та документи</div>
     <nav class="nav">
-      <a class="nav-item"><i class="ti ti-file-text"></i>Заявки<span class="spacer"></span><span class="nav-badge">3</span></a>
-      <a class="nav-item"><i class="ti ti-id-badge-2"></i>Довідки</a>
+      <a class="nav-item disabled"><i class="ti ti-file-text"></i>Заявки<span class="spacer"></span><span class="nav-badge">3</span></a>
+      <a class="nav-item disabled"><i class="ti ti-id-badge-2"></i>Довідки</a>
     </nav>
 
     <div class="sidebar-bottom">
-      <a class="nav-item"><i class="ti ti-settings"></i>Налаштування</a>
+      <a class="nav-item disabled"><i class="ti ti-settings"></i>Налаштування</a>
       <a class="nav-item exit" id="roleSwitchBtn"><i class="ti ti-logout"></i>Вийти</a>
     </div>
   </aside>
@@ -330,9 +331,9 @@
             </div>
           </div>
 
-          <div class="client-row" data-status="applicant" data-name="Nguyen Thi Linh" data-type="foreign">
+          <div class="client-row" data-status="applicant" data-name="Нгуєн Тхі Лінь" data-type="foreign">
             <div class="client-main">
-              <div class="client-name">Nguyen Thi Linh</div>
+              <div class="client-name">Нгуєн Тхі Лінь</div>
               <div class="client-sub">В'єтнам</div>
             </div>
             <div class="client-col"><div class="value">Візуальне мистецтво</div><div class="label">Програма</div></div>
@@ -343,9 +344,9 @@
             </div>
           </div>
 
-          <div class="client-row" data-status="lead" data-name="Karim Benali" data-type="foreign">
+          <div class="client-row" data-status="lead" data-name="Карім Беналі" data-type="foreign">
             <div class="client-main">
-              <div class="client-name">Karim Benali</div>
+              <div class="client-name">Карім Беналі</div>
               <div class="client-sub">Індія</div>
             </div>
             <div class="client-col"><div class="value">Середня освіта</div><div class="label">Інтерес</div></div>
@@ -651,6 +652,32 @@
   </div>
 </div>
 
+<!-- ===================== МОДАЛЬНЕ ВІКНО ПЕРЕМИКАННЯ РОЛІ ===================== -->
+<div class="modal-overlay" id="roleSwitchOverlay">
+  <div class="modal" style="width:380px;">
+    <div class="modal-header">
+      <span class="modal-title">Перемкнути роль</span>
+      <span class="modal-close" id="closeRoleSwitchBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></span>
+    </div>
+    <p class="modal-sub">Для демонстрації прототипу — обери, чий інтерфейс показати</p>
+
+    <div class="role-switch-option current">
+      <div class="role-switch-icon" style="background:#E4F5F2;color:#1E9E8C;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div>
+        <div class="role-switch-name">Кадровий відділ</div>
+        <div class="role-switch-desc">Ви тут зараз</div>
+      </div>
+    </div>
+    <div class="role-switch-option" data-href="контракти-v2.html">
+      <div class="role-switch-icon" style="background:var(--violet-bg);color:var(--violet);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6"/><path d="M9 16h6"/><path d="M4 4h16v16H4z"/></svg></div>
+      <div>
+        <div class="role-switch-name">Контрактний відділ</div>
+        <div class="role-switch-desc">Контракти, оплати, боржники</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   // ---------- Перехід зі списку в деталі ----------
   document.querySelectorAll('.client-row').forEach(row => {
@@ -904,31 +931,5 @@
     opt.addEventListener('click', () => { window.location.href = opt.dataset.href; });
   });
 </script>
-
-<!-- ===================== МОДАЛЬНЕ ВІКНО ПЕРЕМИКАННЯ РОЛІ ===================== -->
-<div class="modal-overlay" id="roleSwitchOverlay">
-  <div class="modal" style="width:380px;">
-    <div class="modal-header">
-      <span class="modal-title">Перемкнути роль</span>
-      <span class="modal-close" id="closeRoleSwitchBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></span>
-    </div>
-    <p class="modal-sub">Для демонстрації прототипу — обери, чий інтерфейс показати</p>
-
-    <div class="role-switch-option current">
-      <div class="role-switch-icon" style="background:#E4F5F2;color:#1E9E8C;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-      <div>
-        <div class="role-switch-name">Кадровий відділ</div>
-        <div class="role-switch-desc">Ви тут зараз</div>
-      </div>
-    </div>
-    <div class="role-switch-option" data-href="контракти-v2.html">
-      <div class="role-switch-icon" style="background:var(--violet-bg);color:var(--violet);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6"/><path d="M9 16h6"/><path d="M4 4h16v16H4z"/></svg></div>
-      <div>
-        <div class="role-switch-name">Контрактний відділ</div>
-        <div class="role-switch-desc">Контракти, оплати, боржники</div>
-      </div>
-    </div>
-  </div>
-</div>
 </body>
 </html>

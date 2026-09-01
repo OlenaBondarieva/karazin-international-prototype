@@ -19,7 +19,7 @@
   body{font-family:'Inter',sans-serif;background:var(--bg-page);color:var(--text-primary);-webkit-font-smoothing:antialiased;}
   .app{display:flex;min-height:100vh;}
 
-  .sidebar{width:280px;flex-shrink:0;background:var(--bg-sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 20px;}
+  .sidebar{width:280px;flex-shrink:0;background:var(--bg-sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 20px;height:100vh;position:sticky;top:0;overflow-y:auto;}
   .logo{display:flex;align-items:center;gap:10px;padding:0 4px 20px;}
   .logo-mark{width:34px;height:34px;flex-shrink:0;}
   .logo-text{font-size:13px;font-weight:700;line-height:1.25;letter-spacing:0.2px;}
@@ -33,6 +33,7 @@
   .nav-item:hover{background:#F5F5F3;}
   .nav-item i{font-size:19px;flex-shrink:0;}
   .nav-item.active{color:var(--accent);background:var(--accent-bg);font-weight:600;}
+  .nav-item.disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
   .nav-item .spacer{flex:1;}
   .nav-badge{font-size:11px;font-weight:700;color:#fff;background:var(--danger);border-radius:var(--radius-pill);padding:1px 7px;line-height:1.5;}
   .sidebar-bottom{margin-top:auto;padding-top:16px;}
@@ -223,19 +224,19 @@
 
     <div class="nav-group-label">Головне</div>
     <nav class="nav">
-      <a class="nav-item"><i class="ti ti-layout-dashboard"></i>Дашборд</a>
-      <a class="nav-item"><i class="ti ti-alert-triangle"></i>Боржники<span class="spacer"></span><span class="nav-badge">18</span></a>
+      <a class="nav-item disabled"><i class="ti ti-layout-dashboard"></i>Дашборд</a>
+      <a class="nav-item disabled"><i class="ti ti-alert-triangle"></i>Боржники<span class="spacer"></span><span class="nav-badge">18</span></a>
     </nav>
 
     <div class="nav-group-label">Фінанси та документи</div>
     <nav class="nav">
       <a class="nav-item active"><i class="ti ti-file-text"></i>Контракти</a>
       <a class="nav-item" onclick="window.location.href='оплати.html'"><i class="ti ti-credit-card"></i>Оплати</a>
-      <a class="nav-item"><i class="ti ti-chart-bar"></i>Звіти</a>
+      <a class="nav-item disabled"><i class="ti ti-chart-bar"></i>Звіти</a>
     </nav>
 
     <div class="sidebar-bottom">
-      <a class="nav-item"><i class="ti ti-settings"></i>Налаштування</a>
+      <a class="nav-item disabled"><i class="ti ti-settings"></i>Налаштування</a>
       <a class="nav-item exit" id="roleSwitchBtn"><i class="ti ti-logout"></i>Вийти</a>
     </div>
   </aside>
@@ -620,8 +621,8 @@
     { name: 'Ковальчук Марія Олегівна', country: 'Україна', level: 'bachelor', faculty: 'Радіофізики', course: '1 курс' },
     { name: 'Аббазаде Фахраддін', country: 'Азербайджан', level: 'master', faculty: 'Міжнародний бізнес', course: '2 курс' },
     { name: 'Демченко Павло Ігорович', country: 'Україна', level: 'bachelor', faculty: "Комп'ютерних наук", course: '3 курс' },
-    { name: 'Nguyen Thi Linh', country: "В'єтнам", level: 'bachelor', faculty: 'Візуальне мистецтво', course: 'Абітурієнт' },
-    { name: 'Karim Benali', country: 'Індія', level: null, faculty: 'Середня освіта', course: 'Лід' },
+    { name: 'Нгуєн Тхі Лінь', country: "В'єтнам", level: 'bachelor', faculty: 'Візуальне мистецтво', course: 'Абітурієнт' },
+    { name: 'Карім Беналі', country: 'Індія', level: null, faculty: 'Середня освіта', course: 'Лід' },
     { name: 'Литвиненко Петро Сергійович', country: 'Україна', level: 'bachelor', faculty: 'Економічний', course: 'Випускник' }
   ];
 
